@@ -92,7 +92,7 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:
 <div class="wrap" id="app">
   <header>
     <svg class="logo" viewBox="0 0 200 200" aria-hidden="true"><path d="M100 15 L170 40 V100 C170 145 135 175 100 188 C65 175 30 145 30 100 V40 Z" fill="#7a4cc2" stroke="#4a2777" stroke-width="6"/><path d="M58 70 h84 a12 12 0 0 1 12 12 v38 a12 12 0 0 1 -12 12 h-44 l-22 20 v-20 h-18 a12 12 0 0 1 -12 -12 v-38 a12 12 0 0 1 12 -12z" fill="#b9f5a7" stroke="#2e7d32" stroke-width="4"/><circle cx="78" cy="101" r="7" fill="#2e7d32"/><circle cx="100" cy="101" r="7" fill="#2e7d32"/><circle cx="122" cy="101" r="7" fill="#2e7d32"/></svg>
-    <div><h1>ЧатПазител</h1><div class="hi">Здравей!</div></div>
+    <div><h1>ЧатПазител</h1><div class="hi">Здравей, пазителю!</div></div>
     <div class="stars" id="stars">⭐ 0</div>
   </header>
   <main id="view"></main>
@@ -171,7 +171,7 @@ function home(){
   const qs=allQ();
   $("#view").innerHTML=`<div class="wrap" style="gap:16px">
    <div class="level"><div class="row"><span>${esc(cur[1])}</span><span>${next?`още ${next[0]-prog.stars} ⭐ до „${esc(next[1])}“`:"Най-високо ниво!"}</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>
-   <h2 style="font-size:20px">Избери герой и помогни на Яна</h2>
+   <h2 style="font-size:20px">Избери герой и стани пазител на интернета</h2>
    <div class="heroes">${Object.entries(TOPICS).map(([k,t])=>`<button class="hero" style="--c:${t.c}" data-t="${k}">${HERO_SVG[k]}<span class="t"><b>${t.name}</b><small>${t.sub} · ${qs.filter(q=>q.topic===k).length} въпроса</small></span></button>`).join("")}</div>
    <button class="big" id="mix">Играй с всички герои</button>
   </div>`;
@@ -205,7 +205,7 @@ function answer(q,a){
   if(ok){prog.correct++;prog.stars++;round.got++;prog.right[q.topic]=(prog.right[q.topic]||0)+1}else{prog.wrong[q.topic]=(prog.wrong[q.topic]||0)+1}
   saveProg();
   const last=round.i===round.list.length-1;
-  $("#fb").innerHTML=`<div class="why ${ok?"ok":"bad"}">${ok?"Браво, Яна! +1 ⭐ ":"Почти! Ето защо: "}${esc(q.why)}</div>
+  $("#fb").innerHTML=`<div class="why ${ok?"ok":"bad"}">${ok?"Браво! +1 ⭐ ":"Почти! Ето защо: "}${esc(q.why)}</div>
    <button class="big" id="next" style="margin-top:10px">${last?"Виж резултата":"Следващ въпрос →"}</button>`;
   $("#next").onclick=()=>{if(last)finish();else{round.i++;showQ()}};
   $("#next").focus();
@@ -213,7 +213,7 @@ function answer(q,a){
 function finish(){
   const n=round.list.length,g=round.got;
   const medal=g===n?"🏆":g>=n-2?"🥇":"🌱";
-  $("#view").innerHTML=`<div class="quiz end"><div class="medal">${medal}</div><h2>${g===n?"Перфектно, Яна!":g>=n-2?"Много добре, Яна!":"Продължавай да се учиш!"}</h2>
+  $("#view").innerHTML=`<div class="quiz end"><div class="medal">${medal}</div><h2>${g===n?"Перфектно!":g>=n-2?"Много добре!":"Продължавай да се учиш!"}</h2>
    <p style="margin:0;font-weight:700">Позна ${g} от ${n} и спечели ${g} ⭐</p>
    <p style="margin:0" class="note">Общо звезди: ${prog.stars} · Ниво: ${esc(level().cur[1])}</p>
    <button class="big" id="again">Играй пак</button><button class="ghost" id="back">Към героите</button></div>`;
@@ -235,7 +235,7 @@ function parents(){
   const pct=prog.answered?Math.round(prog.correct/prog.answered*100):0;
   const weak=Object.entries(prog.wrong).sort((a,b)=>b[1]-a[1])[0];
   $("#ppanel").innerHTML=`
-  <div class="panel"><h3>Резултати на Яна</h3>
+  <div class="panel"><h3>Резултати</h3>
    <div class="stat"><span>Отговорени въпроси</span><b>${prog.answered}</b></div>
    <div class="stat"><span>Верни</span><b>${prog.correct} (${pct}%)</b></div>
    ${Object.entries(TOPICS).map(([k,t])=>`<div class="stat"><span>${t.name}: грешки</span><b>${prog.wrong[k]||0}</b></div>`).join("")}
@@ -255,7 +255,7 @@ function parents(){
     <button class="ok-btn" type="submit">Добави въпроса</button><span id="ftoast" class="toast"></span>
    </form>
    <p class="note" style="margin:0">Добавените въпроси се пазят само на това устройство.</p>
-   <button class="del-btn" id="reset" type="button">Нулирай звездите на Яна</button>
+   <button class="del-btn" id="reset" type="button">Нулирай звездите</button>
   </div>`;
   document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{extra=extra.filter(q=>q.id!==b.dataset.del);saveQ();parents();home()});
   $("#addf").onsubmit=e=>{e.preventDefault();

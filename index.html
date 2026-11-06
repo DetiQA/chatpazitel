@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="ЧатПазител – игра за безопасност в интернет за деца.">
+<meta name="theme-color" content="#7a4cc2">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>ЧатПазител</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one narrow column like a phone app; home = hero cards, quiz = one card at a time */
+:root{
+  --bg:#f3effa; --surface:#ffffff; --ink:#2a2140; --muted:#6c6384;
+  --violet:#7a4cc2; --violet-soft:#e9defa; --green:#3f9d3a; --green-soft:#dcf5d3;
+  --gold:#e3a700; --gold-soft:#fff3c4; --red:#d64545; --red-soft:#fde0e0; --blue:#3a6fc4; --blue-soft:#dde9fb;
+  --line:#d9cfee;
+  --display:"Comfortaa","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1a1527; --surface:#251e36; --ink:#f1ecfb; --muted:#b2a8c9; --violet:#b48bf0; --violet-soft:#3a2d57;
+  --green:#7fd477; --green-soft:#23402a; --gold:#ffcf4a; --gold-soft:#4a3d14; --red:#ff8a8a; --red-soft:#4d2323;
+  --blue:#8fb6ff; --blue-soft:#22324f; --line:#3d3356; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1a1527; --surface:#251e36; --ink:#f1ecfb; --muted:#b2a8c9; --violet:#b48bf0; --violet-soft:#3a2d57;
+  --green:#7fd477; --green-soft:#23402a; --gold:#ffcf4a; --gold-soft:#4a3d14; --red:#ff8a8a; --red-soft:#4d2323;
+  --blue:#8fb6ff; --blue-soft:#22324f; --line:#3d3356; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 40px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+header{display:flex;align-items:center;gap:12px}
+header .logo{width:52px;height:52px;flex:0 0 auto}
+header h1{font-size:24px;color:var(--violet)}
+header .hi{color:var(--muted);font-weight:700}
+.stars{margin-left:auto;background:var(--gold-soft);color:var(--ink);border:2px solid var(--gold);border-radius:999px;padding:6px 12px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.level{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.level .row{display:flex;justify-content:space-between;gap:8px;font-weight:800}
+.level .row span:last-child{color:var(--muted);font-weight:700}
+.bar{height:12px;border-radius:999px;background:var(--violet-soft);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--violet);border-radius:999px;transition:width .4s}
+.heroes{display:grid;gap:12px}
+.hero{display:flex;align-items:center;gap:12px;background:var(--surface);border:3px solid var(--c);border-radius:20px;padding:10px 14px;text-align:left;width:100%}
+.hero:hover{transform:translateY(-2px)}
+.hero svg{width:76px;height:82px;flex:0 0 auto}
+.hero .t{min-width:0;display:flex;flex-direction:column;gap:2px}
+.hero b{font-family:var(--display);font-size:19px;color:var(--c)}
+.hero small{color:var(--muted);font-size:15px}
+.big{background:var(--violet);color:#fff;border:0;border-radius:16px;padding:14px;font-weight:800;font-size:19px;width:100%}
+.ghost{background:transparent;border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:800}
+.quiz{background:var(--surface);border:3px solid var(--c,var(--violet));border-radius:22px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.qtop{display:flex;align-items:center;gap:12px}
+.qtop svg{width:70px;height:76px;flex:0 0 auto}
+.bubble{background:var(--violet-soft);border-radius:16px;padding:10px 12px;font-weight:700;min-width:0}
+.bubble .who{display:block;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.qnum{color:var(--muted);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.answers{display:grid;gap:10px}
+.ans{text-align:left;background:var(--bg);border:3px solid var(--line);border-radius:16px;padding:12px 14px;font-weight:700;display:flex;gap:10px}
+.ans .k{font-family:var(--display);color:var(--violet);flex:0 0 auto}
+.ans.ok{background:var(--green-soft);border-color:var(--green)}
+.ans.bad{background:var(--red-soft);border-color:var(--red)}
+.ans:disabled{cursor:default}
+.why{border-radius:16px;padding:12px 14px;font-weight:700}
+.why.ok{background:var(--green-soft)} .why.bad{background:var(--gold-soft)}
+.end{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center}
+.end .medal{font-size:56px;line-height:1}
+.end h2{font-size:26px;color:var(--violet)}
+.parents{border-top:2px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.parents summary{font-weight:800;color:var(--muted);cursor:pointer}
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.panel h3{font-size:17px}
+.stat{display:flex;justify-content:space-between;gap:8px;font-variant-numeric:tabular-nums}
+.pend{border:2px solid var(--gold);background:var(--gold-soft);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;font-size:15px}
+.pend .btns{display:flex;gap:8px;flex-wrap:wrap}
+.ok-btn{background:var(--green);color:#fff;border:0;border-radius:10px;padding:8px 12px;font-weight:800}
+.del-btn{background:transparent;border:2px solid var(--red);color:var(--red);border-radius:10px;padding:6px 12px;font-weight:800}
+label{font-weight:700;font-size:14px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px}
+.note{font-size:14px;color:var(--muted)}
+.toast{font-weight:800;color:var(--green)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.hero:hover{transform:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap" id="app">
+  <header>
+    <svg class="logo" viewBox="0 0 200 200" aria-hidden="true"><path d="M100 15 L170 40 V100 C170 145 135 175 100 188 C65 175 30 145 30 100 V40 Z" fill="#7a4cc2" stroke="#4a2777" stroke-width="6"/><path d="M58 70 h84 a12 12 0 0 1 12 12 v38 a12 12 0 0 1 -12 12 h-44 l-22 20 v-20 h-18 a12 12 0 0 1 -12 -12 v-38 a12 12 0 0 1 12 -12z" fill="#b9f5a7" stroke="#2e7d32" stroke-width="4"/><circle cx="78" cy="101" r="7" fill="#2e7d32"/><circle cx="100" cy="101" r="7" fill="#2e7d32"/><circle cx="122" cy="101" r="7" fill="#2e7d32"/></svg>
+    <div><h1>ЧатПазител</h1><div class="hi">Здравей!</div></div>
+    <div class="stars" id="stars">⭐ 0</div>
+  </header>
+  <main id="view"></main>
+  <section class="parents" id="parents" hidden>
+    <details id="pdet"><summary>За родители</summary><div id="ppanel"></div></details>
+  </section>
+</div>
+
+<script>
+const HERO_SVG={
+shield:`<svg viewBox="0 0 130 140" aria-hidden="true"><rect x="35" y="12" width="60" height="50" rx="12" fill="#b9f5a7" stroke="#2e7d32" stroke-width="3"/><line x1="65" y1="12" x2="65" y2="3" stroke="#2e7d32" stroke-width="3"/><circle cx="65" cy="4" r="4" fill="#2e7d32"/><circle cx="52" cy="34" r="6" fill="#222"/><circle cx="78" cy="34" r="6" fill="#222"/><path d="M52 48 q13 10 26 0" stroke="#222" stroke-width="3" fill="none"/><rect x="38" y="64" width="54" height="53" rx="10" fill="#7a4cc2"/><rect x="45" y="118" width="12" height="18" fill="#555"/><rect x="73" y="118" width="12" height="18" fill="#555"/><path d="M2 70 L32 62 V92 C32 110 17 120 2 125 Z" fill="#3a6fc4" stroke="#1d3f7a" stroke-width="3"/><rect x="10" y="88" width="14" height="11" rx="2" fill="#fff"/><path d="M12 88 v-4 a5 5 0 0 1 10 0 v4" stroke="#fff" stroke-width="2.5" fill="none"/></svg>`,
+lupa:`<svg viewBox="0 0 130 140" aria-hidden="true"><path d="M35 30 h50 l-8 -20 h-34z" fill="#8b5a2b"/><rect x="28" y="28" width="64" height="6" fill="#5e3a17"/><circle cx="60" cy="55" r="22" fill="#ffd9b3" stroke="#a0704a" stroke-width="2"/><circle cx="52" cy="52" r="3" fill="#222"/><circle cx="68" cy="52" r="3" fill="#222"/><path d="M52 63 q8 6 16 0" stroke="#222" stroke-width="2" fill="none"/><rect x="38" y="77" width="44" height="45" rx="8" fill="#c58a4a"/><rect x="44" y="122" width="10" height="16" fill="#555"/><rect x="66" y="122" width="10" height="16" fill="#555"/><circle cx="102" cy="72" r="16" fill="#dff3ff" stroke="#333" stroke-width="5"/><line x1="91" y1="84" x2="80" y2="100" stroke="#333" stroke-width="6"/></svg>`,
+dobri:`<svg viewBox="0 0 130 140" aria-hidden="true"><ellipse cx="30" cy="80" rx="22" ry="32" fill="#cfe3ff" stroke="#3a6fc4" stroke-width="2"/><ellipse cx="100" cy="80" rx="22" ry="32" fill="#cfe3ff" stroke="#3a6fc4" stroke-width="2"/><circle cx="65" cy="45" r="22" fill="#ffd9b3" stroke="#a0704a" stroke-width="2"/><path d="M43 40 q22 -30 44 0 q-5 -20 -22 -20 q-17 0 -22 20z" fill="#f2b705"/><circle cx="57" cy="45" r="3" fill="#222"/><circle cx="73" cy="45" r="3" fill="#222"/><path d="M56 55 q9 7 18 0" stroke="#d33" stroke-width="2" fill="none"/><path d="M45 70 h40 l12 55 h-64z" fill="#ff8fc7"/><path d="M65 92 c-6 -8 -16 -2 -10 6 l10 10 l10 -10 c6 -8 -4 -14 -10 -6z" fill="#d6336c"/></svg>`};
+const TOPICS={
+ shield:{name:"Щитко",c:"var(--blue)",sub:"Пароли и лични данни"},
+ lupa:{name:"Детектив Лупа",c:"#b57a3c",sub:"Непознати и измами"},
+ dobri:{name:"Добричка",c:"#d6336c",sub:"Мило общуване и обиди"}};
+
+// Built-in question bank (always available, even offline)
+const BASE=[
+// Щитко
+["shield","Приятелка от класа те моли да ѝ кажеш паролата си за Roblox, за да ти „помогне“ в играта. Какво правиш?",["Казвам ѝ, нали ми е приятелка","Не казвам паролата на никого, освен на мама или татко","Записвам ѝ я на листче"],1,"Паролата е като ключ за вкъщи. Знаят я само ти и родителите ти."],
+["shield","Една игра те пита за домашния ти адрес, за да ти „изпрати подарък“. Какво правиш?",["Питам мама или татко, преди да пиша каквото и да е","Пиша адреса бързо, за да не изпусна подаръка","Пиша адреса на баба"],0,"Адресът е лична информация. Винаги първо питай възрастен."],
+["shield","Коя парола е най-сигурна?",["yana2017","123456","Слон+Ябълка+Дъжд7"],2,"Дългата парола с различни думи и знаци е трудна за отгатване."],
+["shield","Искаш да пратиш снимка в чата. Коя снимка е най-добре да НЕ пращаш?",["Рисунка на котка","Снимка пред училището, на която се вижда името му","Снимка на кулата от LEGO"],1,"Името на училището показва къде си всеки ден. Пази го в тайна."],
+["shield","Влезе в профила си на чужд телефон. Какво правиш накрая?",["Нищо, просто го оставям","Излизам от профила си (Изход)","Сменям картинката на телефона"],1,"Ако не излезеш, друг може да пише от твое име."],
+["shield","Какво е добре да пишеш в профила си?",["Пълното си име, телефона и училището","Прякор и любимото си животно","Адреса си"],1,"Прякорът и любимите неща са забавни и не казват къде си."],
+["shield","Пристигна съобщение: „Профилът ти ще бъде изтрит! Напиши паролата си тук.“ Какво правиш?",["Пиша паролата, за да спася профила","Не пиша нищо и показвам на възрастен","Пращам го на приятели"],1,"Истинските игри и приложения никога не искат паролата ти в съобщение."],
+["shield","Мама пита каква е паролата ти. Казваш ли ѝ?",["Да, родителите могат да я знаят","Не, никога на никого","Само ако ми даде бонбон"],0,"Родителите ти помагат да си в безопасност. На тях може да кажеш."],
+["shield","Приложение иска да вижда къде се намираш (локация). Какво правиш?",["Натискам „Разреши“ веднага","Питам родител дали е нужно","Натискам всички бутони"],1,"Локацията казва къде си. Нека възрастен реши дали е нужна."],
+["shield","Кое е лична информация, която пазим?",["Любимият ми цвят","Телефонният ми номер","Любимият ми анимационен филм"],1,"Телефонният номер е лична информация. Пазим го от непознати."],
+// Детектив Лупа
+["lupa","Непознато дете в Roblox те кани във Viber и иска телефона ти. Какво правиш?",["Давам му го, нали е дете","Не му давам и казвам на мама или татко","Давам му телефона на приятелка"],1,"В интернет не можеш да си сигурна кой е от другата страна."],
+["lupa","Изскача прозорец: „ЧЕСТИТО! Спечели нов телефон! Натисни тук!“ Какво правиш?",["Натискам веднага","Затварям прозореца и казвам на възрастен","Пиша името си, за да го получа"],1,"Това е измама. Никой не раздава подаръци чрез изскачащи прозорци."],
+["lupa","Някой в чата ти пише: „Не казвай на родителите си, че си говорим.“ Какво правиш?",["Пазя тайната","Веднага казвам на родител","Пиша му още"],1,"Ако някой те кара да криеш от родителите си, това е сигнал за опасност."],
+["lupa","Непознат иска да се срещнете на живо в парка. Какво правиш?",["Отивам сама","Отивам с приятелка","Отказвам и казвам на родител"],2,"Никога не се срещай с хора, които познаваш само от интернет."],
+["lupa","Профил със снимка на дете казва, че е на 10 години. Сигурно ли е, че е дете?",["Да, има снимка","Не, всеки може да сложи чужда снимка","Да, нали пише"],1,"Снимката и годините може да са измислени. Детектив Лупа винаги се съмнява."],
+["lupa","Получи линк от непознат: „Виж тази смешна игра!“ Какво правиш?",["Отварям го","Не го отварям и питам възрастен","Пращам го на всички"],1,"Непознатите линкове могат да съдържат вируси или измами."],
+["lupa","Някой обещава безплатни Robux, ако му дадеш паролата си. Какво е това?",["Хубав подарък","Измама","Нова игра"],1,"Безплатни Robux срещу парола е най-честата измама в Roblox."],
+["lupa","Непознат ти пише много мили неща и иска твоя снимка. Какво правиш?",["Пращам снимка","Не пращам и казвам на родител","Пращам снимка на приятелка"],1,"Не пращай снимки на непознати, колкото и мили да изглеждат."],
+["lupa","Видео в интернет казва нещо много странно. Как разбираш дали е истина?",["Всичко в интернет е истина","Питам възрастен или проверявам на друго място","Пращам го на всички, за да видят"],1,"Не всичко в интернет е вярно. Добрият детектив проверява."],
+["lupa","Игра иска да платиш с картата на мама. Какво правиш?",["Вземам картата тихо","Питам мама","Натискам „Купи“"],1,"Покупките винаги се правят само с разрешение на родител."],
+// Добричка
+["dobri","В груповия чат на класа всички се смеят на едно дете. Какво правиш?",["Смея се и аз","Не участвам и казвам на учителката или родител","Пиша още по-обидно"],1,"Когато не се присъединяваш към подигравките и търсиш помощ, ти си герой."],
+["dobri","Някой ти написа обидна дума. Какво правиш?",["Отговарям с още по-лоша дума","Не отговарям, натискам „Докладвай“ и казвам на възрастен","Плача и не казвам на никого"],1,"Не отвръщай с обида. Покажи съобщението на възрастен."],
+["dobri","Приятелка сложи рисунка в чата. Какво е мило да напишеш?",["„Много е красива!“","„Грозна е.“","Нищо и я пращам на други да ѝ се смеят"],0,"Милата дума кара другия да се усмихне."],
+["dobri","Искаш да споделиш смешна снимка на приятел. Какво правиш първо?",["Питам го дали е съгласен","Пращам я веднага","Слагам я навсякъде"],0,"Винаги питай, преди да споделиш снимка на друг човек."],
+["dobri","Някой пише ГЛАВНИ БУКВИ И МНОГО УДИВИТЕЛНИ!!! Как звучи това?",["Като че ли вика","Като шепот","Като песен"],0,"Главните букви в чата звучат като викане. Пиши спокойно."],
+["dobri","Изпрати съобщение, което обиди приятел, без да искаш. Какво правиш?",["Нищо","Пиша „Извинявай, не исках да те обидя.“","Пиша още"],1,"Извинението оправя много неща, и в интернет, и на живо."],
+["dobri","Някой те тормози в игра всеки ден. На кого казваш?",["На никого","На родител или учител","Само на котката"],1,"Възрастните могат да помогнат. Не трябва да се справяш сама."],
+["dobri","Деца създадоха група, за да говорят лошо за съученичка. Канят и теб. Какво правиш?",["Влизам","Отказвам и казвам на възрастен","Влизам, но само гледам"],1,"Да кажеш „не“ на лошото е истинска смелост."],
+["dobri","Колко време е добре да играеш на телефона в делничен ден?",["Цял ден","Колкото сме се разбрали с родителите","Цяла нощ"],1,"Почивката, игрите навън и сънят също са важни."],
+["dobri","Кое правило е най-добро за чата?",["Пиши така, както би говорила на човека в лицето","Пиши каквото искаш, никой не те вижда","Пиши само с главни букви"],0,"Зад всеки екран има истински човек с чувства."]
+].map((r,i)=>({id:"b"+i,topic:r[0],q:r[1],a:r[2],correct:r[3],why:r[4]}));
+
+let extra=[];
+let prog={stars:0,answered:0,correct:0,wrong:{shield:0,lupa:0,dobri:0},right:{shield:0,lupa:0,dobri:0}};
+const LS="chatpazitel-yana", LSQ="chatpazitel-questions", PIN="1234"; // смени PIN кода тук
+try{const s=JSON.parse(localStorage.getItem(LS)||"null");if(s)prog=Object.assign(prog,s)}catch(e){}
+try{extra=JSON.parse(localStorage.getItem(LSQ)||"[]")}catch(e){extra=[]}
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LEVELS=[[0,"Малък пазител"],[15,"Смел пазител"],[40,"Супер пазител"],[80,"Пазител на интернета"]];
+function level(){let cur=LEVELS[0],next=null;for(let i=0;i<LEVELS.length;i++){if(prog.stars>=LEVELS[i][0]){cur=LEVELS[i];next=LEVELS[i+1]||null}}return{cur,next}}
+function allQ(){return BASE.concat(extra)}
+
+function saveProg(){
+  try{localStorage.setItem(LS,JSON.stringify(prog))}catch(e){}
+  $("#stars").textContent="⭐ "+prog.stars;
+}
+
+function home(){
+  $("#stars").textContent="⭐ "+prog.stars;
+  const {cur,next}=level();
+  const pct=next?Math.round((prog.stars-cur[0])/(next[0]-cur[0])*100):100;
+  const qs=allQ();
+  $("#view").innerHTML=`<div class="wrap" style="gap:16px">
+   <div class="level"><div class="row"><span>${esc(cur[1])}</span><span>${next?`още ${next[0]-prog.stars} ⭐ до „${esc(next[1])}“`:"Най-високо ниво!"}</span></div><div class="bar"><i style="width:${pct}%"></i></div></div>
+   <h2 style="font-size:20px">Избери герой и помогни на Яна</h2>
+   <div class="heroes">${Object.entries(TOPICS).map(([k,t])=>`<button class="hero" style="--c:${t.c}" data-t="${k}">${HERO_SVG[k]}<span class="t"><b>${t.name}</b><small>${t.sub} · ${qs.filter(q=>q.topic===k).length} въпроса</small></span></button>`).join("")}</div>
+   <button class="big" id="mix">Играй с всички герои</button>
+  </div>`;
+  document.querySelectorAll(".hero").forEach(b=>b.onclick=()=>start(b.dataset.t));
+  $("#mix").onclick=()=>start(null);
+}
+
+let round=null;
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(topic){
+  const pool=allQ().filter(q=>!topic||q.topic===topic);
+  round={list:shuffle(pool).slice(0,5),i:0,got:0};
+  showQ();
+}
+function showQ(){
+  const q=round.list[round.i],t=TOPICS[q.topic];
+  const order=shuffle([0,1,2]);
+  $("#view").innerHTML=`<div class="quiz" style="--c:${t.c}">
+   <div class="qnum">Въпрос ${round.i+1} от ${round.list.length}</div>
+   <div class="qtop">${HERO_SVG[q.topic]}<div class="bubble"><span class="who">${t.name} пита</span>${esc(q.q)}</div></div>
+   <div class="answers">${order.map((ai,n)=>`<button class="ans" data-a="${ai}"><span class="k">${"АБВ"[n]})</span><span>${esc(q.a[ai])}</span></button>`).join("")}</div>
+   <div id="fb"></div>
+   <button class="ghost" id="quit" style="align-self:flex-start">← Към героите</button></div>`;
+  document.querySelectorAll(".ans").forEach(b=>b.onclick=()=>answer(q,+b.dataset.a));
+  $("#quit").onclick=home;
+}
+function answer(q,a){
+  const ok=a===q.correct;
+  document.querySelectorAll(".ans").forEach(b=>{b.disabled=true;const v=+b.dataset.a;if(v===q.correct)b.classList.add("ok");else if(v===a)b.classList.add("bad")});
+  prog.answered++;
+  if(ok){prog.correct++;prog.stars++;round.got++;prog.right[q.topic]=(prog.right[q.topic]||0)+1}else{prog.wrong[q.topic]=(prog.wrong[q.topic]||0)+1}
+  saveProg();
+  const last=round.i===round.list.length-1;
+  $("#fb").innerHTML=`<div class="why ${ok?"ok":"bad"}">${ok?"Браво, Яна! +1 ⭐ ":"Почти! Ето защо: "}${esc(q.why)}</div>
+   <button class="big" id="next" style="margin-top:10px">${last?"Виж резултата":"Следващ въпрос →"}</button>`;
+  $("#next").onclick=()=>{if(last)finish();else{round.i++;showQ()}};
+  $("#next").focus();
+}
+function finish(){
+  const n=round.list.length,g=round.got;
+  const medal=g===n?"🏆":g>=n-2?"🥇":"🌱";
+  $("#view").innerHTML=`<div class="quiz end"><div class="medal">${medal}</div><h2>${g===n?"Перфектно, Яна!":g>=n-2?"Много добре, Яна!":"Продължавай да се учиш!"}</h2>
+   <p style="margin:0;font-weight:700">Позна ${g} от ${n} и спечели ${g} ⭐</p>
+   <p style="margin:0" class="note">Общо звезди: ${prog.stars} · Ниво: ${esc(level().cur[1])}</p>
+   <button class="big" id="again">Играй пак</button><button class="ghost" id="back">Към героите</button></div>`;
+  $("#again").onclick=()=>start(null);$("#back").onclick=home;
+}
+
+// ---- Parents panel (PIN protected) ----
+let unlocked=false;
+function saveQ(){try{localStorage.setItem(LSQ,JSON.stringify(extra))}catch(e){}}
+function parents(){
+  $("#parents").hidden=false;
+  if(!unlocked){
+    $("#ppanel").innerHTML=`<div class="panel"><form id="pinf" style="display:flex;flex-direction:column;gap:8px">
+     <label>Код за родители<input id="pin" type="password" inputmode="numeric" autocomplete="off"></label>
+     <button class="ok-btn" type="submit">Влез</button><span id="pinmsg" class="note"></span></form></div>`;
+    $("#pinf").onsubmit=e=>{e.preventDefault();if($("#pin").value===PIN){unlocked=true;parents()}else{$("#pinmsg").textContent="Грешен код. Опитай отново."}};
+    return;
+  }
+  const pct=prog.answered?Math.round(prog.correct/prog.answered*100):0;
+  const weak=Object.entries(prog.wrong).sort((a,b)=>b[1]-a[1])[0];
+  $("#ppanel").innerHTML=`
+  <div class="panel"><h3>Резултати на Яна</h3>
+   <div class="stat"><span>Отговорени въпроси</span><b>${prog.answered}</b></div>
+   <div class="stat"><span>Верни</span><b>${prog.correct} (${pct}%)</b></div>
+   ${Object.entries(TOPICS).map(([k,t])=>`<div class="stat"><span>${t.name}: грешки</span><b>${prog.wrong[k]||0}</b></div>`).join("")}
+   ${weak&&weak[1]>0?`<p class="note" style="margin:0">Най-много грешки: <b>${TOPICS[weak[0]].name}</b> (${TOPICS[weak[0]].sub.toLowerCase()}). Добра тема за разговор.</p>`:""}
+  </div>
+  <div class="panel"><h3>Добавени въпроси (${extra.length})</h3>
+   ${extra.length?extra.map(p=>`<div class="pend"><b>${TOPICS[p.topic].name}: ${esc(p.q)}</b><div class="btns"><button class="del-btn" data-del="${p.id}">Изтрий</button></div></div>`).join(""):`<p class="note" style="margin:0">Още няма добавени въпроси.</p>`}
+  </div>
+  <div class="panel"><h3>Добави свой въпрос</h3>
+   <form id="addf" style="display:flex;flex-direction:column;gap:8px">
+    <label>Герой<select id="f-topic">${Object.entries(TOPICS).map(([k,t])=>`<option value="${k}">${t.name}</option>`).join("")}</select></label>
+    <label>Въпрос<textarea id="f-q" rows="2" required></textarea></label>
+    <label>Верен отговор<input id="f-a0" required></label>
+    <label>Грешен отговор 1<input id="f-a1" required></label>
+    <label>Грешен отговор 2<input id="f-a2" required></label>
+    <label>Обяснение<input id="f-why" required></label>
+    <button class="ok-btn" type="submit">Добави въпроса</button><span id="ftoast" class="toast"></span>
+   </form>
+   <p class="note" style="margin:0">Добавените въпроси се пазят само на това устройство.</p>
+   <button class="del-btn" id="reset" type="button">Нулирай звездите на Яна</button>
+  </div>`;
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{extra=extra.filter(q=>q.id!==b.dataset.del);saveQ();parents();home()});
+  $("#addf").onsubmit=e=>{e.preventDefault();
+    extra.push({id:"u"+Date.now(),topic:$("#f-topic").value,q:$("#f-q").value.trim(),a:[$("#f-a0").value.trim(),$("#f-a1").value.trim(),$("#f-a2").value.trim()],correct:0,why:$("#f-why").value.trim()});
+    saveQ();parents();home();$("#ftoast").textContent="Добавен!";};
+  $("#reset").onclick=()=>{prog={stars:0,answered:0,correct:0,wrong:{shield:0,lupa:0,dobri:0},right:{shield:0,lupa:0,dobri:0}};saveProg();parents();home()};
+}
+
+home();
+parents();
+</script>
+</body>
+</html>
